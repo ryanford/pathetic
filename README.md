@@ -58,7 +58,7 @@ pathetic:get_path("/hello%2Fworld?lang=lua")
 
 Returns a path's query string parsed into a table with key and values unescaped.
 ```lua
-"pathetic:get_query("/hello/world?lang=lua%20lang&lib=pathetic")"
+pathetic:get_query("/hello/world?lang=lua%20lang&lib=pathetic")
 ```
 ```lua
 {
@@ -71,7 +71,7 @@ Returns a path's query string parsed into a table with key and values unescaped.
 
 Returns a path's raw query string.
 ```lua
-"pathetic:get_raw_query("/hello/world?lang=lua%20lang&lib=pathetic")"
+pathetic:get_raw_query("/hello/world?lang=lua%20lang&lib=pathetic")
 ```
 ```lua
 "lang=lua%20lang&lib=pathetic"
