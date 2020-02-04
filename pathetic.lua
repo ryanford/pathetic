@@ -3,6 +3,21 @@ local P, S, R, V, C, Cc, Cf = lpeg.P, lpeg.S, lpeg.R, lpeg.V, lpeg.C, lpeg.Cc, l
 
 local pathetic = {}
 
+function pathetic.unescape(self, str)
+	if not str then return nil, "no string given" end
+	local unescaped = str:gsub("%%([0-7A-Fa-f][0-7A-Fa-f])", function(hex) return string.char("0x" .. hex) end)
+	return unescaped
+end
+
+function pathetic.escape(self, str)
+	if not str then return nil, "no string given" end
+	local escaped = str:gsub("[%:%/%?%#%[%]%@%!%$%&%'%(%)%*%+%,%;%=%s]", function(c)
+		local byte = string.format("%x", string.byte(c)):upper()
+		return "%" .. (#byte == 2 and byte or "0" .. byte)
+	end)
+	return escaped
+end
+
 local pchar = P{
 	"pchar",
 	pchar = V"unreserved" + V"pct_encoded" + V"sub_delims" + S":@",
@@ -16,6 +31,7 @@ local pchar = P{
 }
 
 function pathetic.parse_query(self, query)
+	if not query then return nil, "no query given" end
 	local set = {}
 	return P{
 		"parsed_query",
@@ -70,22 +86,20 @@ local path_part = P{
 	segment_nz_nc = (pchar - P":") ^ 1,
 }
 
-function pathetic.unescape(self, str)
-	local unescaped = str:gsub("%%(%w%w)", function(hex) return string.char("0x" .. hex) end)
-	return unescaped
-end
-
-function pathetic.escape(self, str)
-	local escaped = str:gsub("[%:%/%?%#%[%]%@%!%$%&%'%(%)%*%+%,%;%=%s]", function(c)
-		local byte = string.format("%x", string.byte(c)):upper()
-		return "%" .. (#byte == 2 and byte or "0" .. byte)
-	end)
-	return escaped
-end
+local uri = P{
+	"uri",
+	uri = V"path_noquery_nofragment" + V"path_query_nofragment" + V"path_noquery_fragment" + V"path_query_fragment",
+	path_noquery_nofragment = C(path_part) * -1,
+	path_query_nofragment = C(path_part) * P"?" * C(query) * -1,
+	path_noquery_fragment = C(path_part) * Cc(nil) * P"#" * C(fragment) * -1,
+	path_query_fragment = C(path_part) * P"?" * C(query) * P"#" * C(fragment) * -1,
+}
 
 function pathetic.parse(self, path)
+	if not path then return nil, "no path given" end
 	local parsed
-	local raw_path, raw_query, raw_fragment = P(C(path_part) * (P"?" * C(query)) ^ -1 * (P"#" * C(fragment)) ^ -1):match(path)
+	local raw_path, raw_query, raw_fragment = uri:match(path)
+	if not raw_path then return nil, "path is malformed" end
 	parsed = {
 		raw_path = raw_path,
 		raw_query = raw_query,
@@ -98,27 +112,45 @@ function pathetic.parse(self, path)
 end
 
 function pathetic.get_raw_path(self, path)
-	return P(C(path_part) * (P"?" * query) ^ -1 * (P"#" * fragment) ^ -1):match(path)
+	if not path then return nil, "no path given" end
+	local raw_path = (C(path_part) * (P"?" * query) ^ -1 * (P"#" * fragment) ^ -1 * -1):match(path)
+	if not raw_path then return nil, "path is malformed" end
+	return raw_path
 end
 
 function pathetic.get_path(self, path)
-	return P((Cc(self) * C(path_part) / self.unescape) * (P"?" * query) ^ -1 * (P"#" * fragment) ^ -1):match(path)
+	if not path then return nil, "no path given" end
+	local unescaped_path = ((Cc(self) * C(path_part) / self.unescape) * (P"?" * query) ^ -1 * (P"#" * fragment) ^ -1 * -1):match(path)
+	if not unescaped_path then return nil, "path is malformed" end
+	return unescaped_path
 end
 
 function pathetic.get_raw_query(self, path)
-	return P(path_part * (P"?" * C(query)) ^ -1 * (P"#" * fragment) ^ -1):match(path)
+	if not path then return nil, "no path given" end
+	local raw_query = (path_part * ((P"?" * C(query)) + Cc(nil)) ^ -1 * (P"#" * fragment) ^ -1 * -1):match(path)
+	if not raw_query then return nil, "path is malformed" end
+	return raw_query
 end
 
 function pathetic.get_query(self, path)
-	return P(path_part * (P"?" * ((Cc(self) * C(query)) / self.parse_query)) ^ -1 * (P"#" * fragment)):match(path)
+	if not path then return nil, "no path given" end
+	local parsed_query = (path_part * ((P"?" * ((Cc(self) * C(query)) / self.parse_query)) + Cc(nil)) ^ -1 * (P"#" * fragment) ^ -1 * -1):match(path)
+	if not parsed_query then return nil, "path is malformed" end
+	return parsed_query
 end
 
 function pathetic.get_raw_fragment(self, path)
-	return P(path_part * (P"?" * query) ^ -1 * (P"#" * C(fragment)) ^ -1):match(path)
+	if not path then return nil, "no path given" end
+	local raw_fragment = (path_part * (P"?" * query) ^ -1 * ((P"#" * C(fragment)) ^ -1 + Cc(nil)) * -1):match(path)
+	if not raw_fragment then return nil, "path is malformed" end
+	return raw_fragment
 end
 
 function pathetic.get_fragment(self, path)
-	return P(path_part * (P"?" * query) ^ -1 * (P"#" * (Cc(self) * C(fragment) / self.unescape)) ^ -1):match(path)
+	if not path then return nil, "no path given" end
+	local unescaped_fragment = (path_part * (P"?" * query) ^ -1 * (P"#" * (Cc(self) * C(fragment) / self.unescape)) ^ -1 * -1):match(path)
+	if not unescaped_fragment then return nil, "path is malformed" end
+	return unescaped_fragment
 end
 
 return pathetic
