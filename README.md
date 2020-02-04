@@ -99,7 +99,7 @@ pathetic:get_path("/hello%2Fworld?lang=lua#docs%2Finfo")
 ---
 ### `pathetic:parse_query(query_str)`
 
-Returns a query string parsed into a table.
+Returns a query string parsed into a table, unescaped.
 ```lua
 pathetic:parse("lang=lua%20lang&lib=pathetic")
 ```
