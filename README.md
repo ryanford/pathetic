@@ -126,7 +126,7 @@ pathetic:unescape("hello%20world%21")
 "hello world!"
 ```
 ---
-### `pathetic:unescape(str)`
+### `pathetic:escape(str)`
 
 Returns a string with an [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.2) reserved chars percent encoded.
 ```lua
