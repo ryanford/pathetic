@@ -1,8 +1,8 @@
 package = "pathetic"
-version = "1.0.1-1"
+version = "1.0.2-1"
 source = {
    url = "git://github.com/ryanford-frontend/pathetic",
-   tag = "v1.0.1"
+   tag = "v1.0.2"
 }
 description = {
    detailed = "Helper library build to parse http URI paths as described in https://tools.ietf.org/html/rfc3986",
