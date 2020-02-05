@@ -6,7 +6,7 @@ source = {
 
 description = {
    detailed = "Helper library build to parse http URI paths as described in https://tools.ietf.org/html/rfc3986",
-   homepage = "https://ryanford-frontend.github.io/pathetic",
+   homepage = "https://github.com/ryanford-frontend/pathetic",
    license = "MIT/X11"
 }
 
