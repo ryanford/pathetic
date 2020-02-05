@@ -9,6 +9,7 @@ local document = window.document
 
 local display = document:getElementById("display")
 local form = document:getElementById("ui")
+local label = form:querySelector("label")
 local input = document:getElementById("path_input")
 local btn = document:getElementById("submit_btn")
 
@@ -18,3 +19,6 @@ form:addEventListener("submit", function(self, e)
 end)
 
 btn:removeAttribute("disabled")
+label:removeAttribute("style")
+input:removeAttribute("style")
+btn:removeAttribute("style")

@@ -97,14 +97,15 @@
 <body>
 	<main>
 		<h1>Pathetic</h1>
+		<a href="https://github.com/ryanford-frontend/pathetic">Source on Github</a>
 		<p>Helper library to parse HTTP URI paths as described in <a href="https://tools.ietf.org/html/rfc3986">https://tools.ietf.org/html/rfc3986</a></p>
 		<code>
 			<pre id="display"></pre>
 		</code>
 		<form id="ui" action="#">
-			<label for="path_input">Path String</label>
-			<input id="path_input" type="text" placeholder="Enter a path to parse">
-			<button id="submit_btn" type="submit" disabled>Parse</button>
+			<label for="path_input" style="cursor: wait">Path String</label>
+			<input id="path_input" type="text" placeholder="Enter a path to parse" style="cursor: wait">
+			<button id="submit_btn" type="submit" style="cursor: wait; background-color: lightgrey;" disabled>Parse</button>
 		</form>
 	</main>
 </body>
