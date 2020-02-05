@@ -17,22 +17,24 @@ Demo made with [Fengari](https://fengari.io), [LuLPeg](https://github.com/pygy/L
 ---
 ### `pathetic:parse(path_str)`
 
-Returns the path parsed into a table, unescaped. Any keys appearing more than once with different values are gathered into a table.
+Returns the path parsed into a table, unescaped. Query is parsed into a subtable, unescaped and any keys appearing more than once with different values are gathered into a subtable.
 
 ```lua
-pathetic:parse("/hello/world?lang=lua%21#docs%2Finfo")
+pathetic:parse("/hello/world?lang=lua%21&lang=english&lib=pathetic#docs%2Finfo")
 ```
 ```lua
 {
   fragment = "docs/info",
   path = "/hello/world",
   query = {
-    lang = "lua!"
+    lang = { "lua!", "english" },
+    lib = "pathetic"
   },
   raw_fragment = "docs%2Finfo",
   raw_path = "/hello/world",
-  raw_query = "lang=lua%21"
+  raw_query = "lang=lua%21&lang=english&lib=pathetic"
 }
+
 ```
 ---
 ### `pathetic:get_path(path_str)`
@@ -57,13 +59,14 @@ pathetic:get_path("/hello%2Fworld?lang=lua")
 ---
 ### `pathetic:get_query(path_str)`
 
-Returns a path's query string parsed into a table with key and values unescaped.
+Returns a path's query string parsed into a table with key and values unescaped. Any keys appearing more than once with different values are gathered into a subtable.
+
 ```lua
-pathetic:get_query("/hello/world?lang=lua%20lang&lib=pathetic")
+pathetic:get_query("/hello/world?lang=lua%20lang&lib=english&lib=pathetic")
 ```
 ```lua
 {
-  lang = "lua lang",
+  lang = { "lua lang", "english" },
   lib = "pathetic"
 }
 ```
@@ -102,11 +105,11 @@ pathetic:get_path("/hello%2Fworld?lang=lua#docs%2Finfo")
 
 Returns a query string parsed into a table, unescaped. Any keys appearing more than once with different values are gathered into a table.
 ```lua
-pathetic:parse("lang=lua%20lang&lib=pathetic")
+pathetic:parse("lang=lua%20lang&lang=english&lib=pathetic")
 ```
 ```lua
 {
-  lang = "lua lang",
+  lang = { "lua lang", "english" },
   lib = "pathetic"
 }
 ```
