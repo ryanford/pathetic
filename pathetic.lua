@@ -23,7 +23,6 @@ local pchar = P{
 	pchar = V"unreserved" + V"pct_encoded" + V"sub_delims" + S":@",
 	pct_encoded = P"%" * V"hexdig" * V"hexdig",
 	unreserved = V"alpha" + V"digit" + S"-._~",
-	gen_delims = S":/?#[]@",
 	sub_delims = S"!$&'()*+,;=",
 	alpha = R("AZ", "az"),
 	digit = R"09",
