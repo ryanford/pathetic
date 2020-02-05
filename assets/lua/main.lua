@@ -10,15 +10,16 @@ local document = window.document
 local display = document:getElementById("display")
 local form = document:getElementById("ui")
 local label = form:querySelector("label")
-local input = document:getElementById("path_input")
+local path_input = document:getElementById("path_input")
 local btn = document:getElementById("submit_btn")
 
 form:addEventListener("submit", function(self, e)
 	local input = document:getElementById("path_input")
-	display.textContent = inspect(pathetic:parse(input.value))
+	local parsed, err = pathetic:parse(input.value)
+	display.textContent = parsed and inspect(parsed) or err
 end)
 
 btn:removeAttribute("disabled")
 label:removeAttribute("style")
-input:removeAttribute("style")
+path_input:removeAttribute("style")
 btn:removeAttribute("style")
