@@ -23,7 +23,6 @@ local pchar = P{
 	pchar = V"unreserved" + V"pct_encoded" + V"sub_delims" + S":@",
 	pct_encoded = P"%" * V"hexdig" * V"hexdig",
 	unreserved = V"alpha" + V"digit" + S"-._~",
-	gen_delims = S":/?#[]@",
 	sub_delims = S"!$&'()*+,;=",
 	alpha = R("AZ", "az"),
 	digit = R"09",
@@ -33,9 +32,9 @@ local pchar = P{
 function pathetic.parse_query(self, query)
 	if not query then return nil, "no query given" end
 	local set = {}
-	return P{
+	local parsed = P{
 		"parsed_query",
-		parsed_query = Cf(Cc{} * (V"stmt" * (P"&" * V"stmt") ^ 0) ^ -1, function(acc, x)
+		parsed_query = Cf(Cc{} * (V"stmt" * (P"&" * V"stmt") ^ 0) ^ -1 * -1, function(acc, x)
 			if acc[1] then -- match is value
 				local key = acc[1]
 				if acc[key] then -- key already used
@@ -67,6 +66,8 @@ function pathetic.parse_query(self, query)
 		key = Cc(self) * C((pchar - S"&=") ^ 1) / self.unescape,
 		value = Cc(self) * C((pchar - P"&") ^ 0) / self.unescape,
 	}:match(query)
+	if not parsed then return nil, "query string malformed" end
+	return parsed
 end
 
 local query = (pchar + S"/?") ^ 0
