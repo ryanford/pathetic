@@ -6,7 +6,7 @@ Originally designed to be used with [lua-http](https://github.com/daurnimator/lu
 
 `luarocks install pathetic`
 
-Only dependency is LPeg. This should already be installed if using with lua-http.
+Only dependency is LPeg.
 
 ## [View Demo](https://ryanford-frontend.github.io/pathetic)
 
