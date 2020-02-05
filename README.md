@@ -17,7 +17,8 @@ Demo made with [Fengari](https://fengari.io), [LuLPeg](https://github.com/pygy/L
 ---
 ### `pathetic:parse(path_str)`
 
-Returns the path parsed into a table.
+Returns the path parsed into a table, unescaped. Any keys appearing more than once with different values are gathered into a table.
+
 ```lua
 pathetic:parse("/hello/world?lang=lua%21#docs%2Finfo")
 ```
@@ -69,7 +70,7 @@ pathetic:get_query("/hello/world?lang=lua%20lang&lib=pathetic")
 ---
 ### `pathetic:get_raw_query(path_str)`
 
-Returns a path's raw query string.
+Returns a path's raw query string, without unescaping.
 ```lua
 pathetic:get_raw_query("/hello/world?lang=lua%20lang&lib=pathetic")
 ```
@@ -99,7 +100,7 @@ pathetic:get_path("/hello%2Fworld?lang=lua#docs%2Finfo")
 ---
 ### `pathetic:parse_query(query_str)`
 
-Returns a query string parsed into a table, unescaped.
+Returns a query string parsed into a table, unescaped. Any keys appearing more than once with different values are gathered into a table.
 ```lua
 pathetic:parse("lang=lua%20lang&lib=pathetic")
 ```
