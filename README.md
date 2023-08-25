@@ -8,7 +8,7 @@ Originally designed to be used with [lua-http](https://github.com/daurnimator/lu
 
 Only dependency is LPeg. This should already be installed if using with lua-http.
 
-## [View Demo](https://ryanford-frontend.github.io/pathetic)
+## [View Demo](https://ryanford.github.io/pathetic)
 
 Demo made with [Fengari](https://fengari.io), [LuLPeg](https://github.com/pygy/LuLPeg) and [inspect.lua](https://github.com/kikito/inspect.lua)
 
